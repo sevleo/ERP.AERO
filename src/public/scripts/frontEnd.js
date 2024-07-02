@@ -1,4 +1,4 @@
-// Function to handle login form submission
+// Handle login form submission
 const handleLogin = async (event) => {
   event.preventDefault();
   const formData = new FormData(document.getElementById("loginForm"));
@@ -13,8 +13,6 @@ const handleLogin = async (event) => {
       },
       body: JSON.stringify({ username, password }),
     });
-
-    console.log(response);
 
     const data = await response.json();
 
@@ -33,7 +31,7 @@ const handleLogin = async (event) => {
   }
 };
 
-// Function to handle signup form submission
+// Handle signup form submission
 const handleSignup = async (event) => {
   event.preventDefault();
   const formData = new FormData(document.getElementById("signupForm"));
