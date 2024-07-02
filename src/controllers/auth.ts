@@ -26,7 +26,7 @@ const signup = asyncHandler(async (req: Request, res: any) => {
     // Hash the password with bcrypt, using 10 rounds of salt
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Insert new user into the database
+    // Generate user id
     const newId = uuidv4();
     // Insert new user into the database
     const insertQuery =
