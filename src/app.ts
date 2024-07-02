@@ -1,7 +1,10 @@
 import express from "express";
 import dotenv from "dotenv";
+import "./db";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 dotenv.config();
+
 const app = express();
 const PORT = process.env.PORT;
 
