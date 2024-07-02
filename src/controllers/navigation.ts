@@ -1,9 +1,16 @@
 import asyncHandler from "express-async-handler";
 
-export const home = asyncHandler(async (req, res) => {
+const home = asyncHandler(async (req, res) => {
   res.render("index");
 });
 
-export const signup = asyncHandler(async (req, res) => {
+const signup = asyncHandler(async (req, res) => {
   res.render("signup");
 });
+
+const navigation = {
+  home,
+  signup,
+};
+
+export default navigation;

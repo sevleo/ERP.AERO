@@ -1,9 +1,13 @@
 import express from "express";
-import { home, signup } from "../controllers/navigation";
+import navigation from "../controllers/navigation";
+import auth from "../controllers/auth";
 const router = express.Router();
 
 // Pages
-router.get("/", home);
-router.get("/sign-up", signup);
+router.get("/", navigation.home);
+router.get("/signup", navigation.signup);
+
+// SignUp API
+router.post("/signup", auth.signup);
 
 export default router;
