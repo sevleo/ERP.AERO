@@ -5,7 +5,7 @@
     <div>
       <p>Welcome back</p>
       <p>Sign in to your account</p>
-      <form action="/login/password" method="POST">
+      <form id="loginForm" action="/signin" method="POST">
         <label for="username">Username</label>
         <input name="username" placeholder="username" type="text" />
         <label for="password">Password</label>
@@ -15,6 +15,7 @@
       <p>
         Don't have an account? <span><a href="/signup">Sign Up Now</a></span>
       </p>
+      <p id="loginMessage"></p>
       <p></p>
     </div>
     <br />
