@@ -1,9 +1,9 @@
-import express from "express";
 import dotenv from "dotenv";
+dotenv.config();
+import express from "express";
+
 import "./db";
 import jwt, { JwtPayload } from "jsonwebtoken";
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT;
