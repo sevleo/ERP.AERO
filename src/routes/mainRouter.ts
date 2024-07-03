@@ -28,6 +28,4 @@ router.get(
   auth.verifyToken
 );
 
-router.get("/info", navigation.info);
-
 export default router;

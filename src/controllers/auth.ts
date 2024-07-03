@@ -23,7 +23,7 @@ const signup = asyncHandler(async (req: Request, res: any) => {
     // Check if user already exists
     const [rows] = await connection
       .promise()
-      .query("SELECT * FROM users WHERE username = ?", [username]);
+      .query("SELECT * FROM users WHERE id = ?", [username]);
 
     if ((rows as any[]).length > 0) {
       return res.status(409).json({ message: "Username already exists." });
@@ -33,17 +33,14 @@ const signup = asyncHandler(async (req: Request, res: any) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Generate user id
-    const newId = uuidv4();
     // Insert new user into the database
-    const insertQuery =
-      "INSERT INTO users (id, username, password) VALUES (?, ?, ?)";
-    await connection
-      .promise()
-      .query(insertQuery, [newId, username, hashedPassword]);
+    const insertQuery = "INSERT INTO users (id, password) VALUES (?, ?)";
+    await connection.promise().query(insertQuery, [username, hashedPassword]);
 
+    // For requesting bearer token by id & password
     const payload = {
-      username: username,
-      id: newId,
+      id: username,
+      password: password,
     };
 
     // Generate tokens
@@ -76,7 +73,7 @@ const signin = asyncHandler(async (req: Request, res: any) => {
     // Check if user exists
     const [rows] = await connection
       .promise()
-      .query<any>("SELECT * FROM users WHERE username = ?", [username]);
+      .query<any>("SELECT * FROM users WHERE id = ?", [username]);
 
     const user = rows[0];
 
@@ -92,22 +89,22 @@ const signin = asyncHandler(async (req: Request, res: any) => {
     }
 
     const payload = {
-      username: user.username,
       id: user.id,
+      password: password,
     };
 
     // Generate tokens
     const accessToken = generateSigninToken(payload);
     const refreshToken = generateRefreshToken(payload);
 
-    // res.json({ accessToken, refreshToken });
+    console.log(payload);
 
     res.status(200).send({
       success: true,
       message: "Logged in successfully",
       accessToken: accessToken,
       refreshToken: refreshToken,
-      username: user.username,
+      username: user.id,
     });
   } catch (err) {
     console.error("Error signing in:", err);
@@ -170,7 +167,6 @@ const verifyToken = asyncHandler(async (req: any, res: any) => {
       success: true,
       user: {
         id: req.user.id,
-        username: req.user.username,
       },
     });
   } else {

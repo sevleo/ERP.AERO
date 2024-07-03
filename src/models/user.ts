@@ -10,7 +10,6 @@ declare global {
   namespace Express {
     interface User extends RowDataPacket {
       id: string;
-      username: string;
       password: string;
     }
 

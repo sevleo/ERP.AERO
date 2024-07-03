@@ -24,7 +24,7 @@ function Home() {
       .then((res) => {
         console.log(res);
         setSignedIn(true);
-        setUser(res.data.user.username);
+        setUser(res.data.user.id);
         setLoaded(true);
       })
       .catch((err) => {
