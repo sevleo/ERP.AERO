@@ -154,6 +154,8 @@ function Home({ signedIn, setSignedIn, user, setUser }: any) {
         </div>
         <br />
         <div>
+          <p>To upload a file, please sign in</p>
+
           <input
             type="file"
             onChange={handleFileChange}

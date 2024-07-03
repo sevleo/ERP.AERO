@@ -1,29 +1,39 @@
 import fs from "fs";
 import path from "path";
 import connection from "../db";
+import { isTokenBlacklisted } from "../helpers/disableTokens";
 
 // Function to upload file
 export const uploadFile = async (req: any, res: any) => {
   console.log(req.file);
   console.log(req.headers);
 
-  // Deconstructing req.file
-  const { file } = req;
-  const { originalname, mimetype, size, filename } = file;
+  if (isTokenBlacklisted(req.headers.authorization)) {
+    res.status(401).send("token is blacklisted");
+  } else {
+    // Deconstructing req.file
+    const { file } = req;
+    const { originalname, mimetype, size, filename } = file;
 
-  try {
-    const query =
-      "INSERT INTO files (file_name, file_extension, mime_type, file_size, upload_date) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)";
-    await connection
-      .promise()
-      .query(query, [originalname, path.extname(originalname), mimetype, size]);
+    try {
+      const query =
+        "INSERT INTO files (file_name, file_extension, mime_type, file_size, upload_date) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)";
+      await connection
+        .promise()
+        .query(query, [
+          originalname,
+          path.extname(originalname),
+          mimetype,
+          size,
+        ]);
 
-    res
-      .status(200)
-      .send({ success: true, message: "File uploaded successfully." });
-  } catch (err) {
-    console.error("Error uploading file:", err);
-    res.status(500).send("Internal server error.");
+      res
+        .status(200)
+        .send({ success: true, message: "File uploaded successfully." });
+    } catch (err) {
+      console.error("Error uploading file:", err);
+      res.status(500).send("Internal server error.");
+    }
   }
 };
 
