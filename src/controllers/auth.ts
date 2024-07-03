@@ -160,29 +160,6 @@ const refreshToken = asyncHandler(async (req: any, res: any) => {
       message: "Unauthorized",
     });
   }
-
-  // try {
-  //   jwt.verify(
-  //     token,
-  //     process.env.REFRESH_TOKEN_SECRET!,
-  //     (err: any, user: any) => {
-  //       if (err) {
-  //         return res.sendStatus(401);
-  //       }
-
-  //       const payload = {
-  //         id: user.id,
-  //         password: user.password,
-  //       };
-
-  //       const accessToken = generateSigninToken(payload);
-  //       res.json({ accessToken });
-  //     }
-  //   );
-  // } catch (err) {
-  //   console.error("Error refreshing token:", err);
-  //   res.status(500).send("Internal server error");
-  // }
 });
 
 // Return user if token is verified

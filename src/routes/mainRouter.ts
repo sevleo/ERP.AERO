@@ -23,6 +23,8 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   auth.refreshToken
 );
+
+// Verify token and get user if token is valid
 router.get(
   "/verify-token",
   passport.authenticate("jwt", { session: false }),
