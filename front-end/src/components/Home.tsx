@@ -164,6 +164,7 @@ function Home({ signedIn, setSignedIn, user, setUser }: any) {
           <button onClick={handleUpload}>Upload</button>
           <p>{message}</p>
         </div>
+        <button onClick={() => navigate("/files")}>Files page</button>
       </div>
     )
   );

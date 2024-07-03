@@ -4,7 +4,7 @@ import auth from "../controllers/auth";
 import passport from "passport";
 import displayData from "../controllers/displayData";
 import multer from "multer";
-import { uploadFile } from "../controllers/file";
+import { uploadFile, listFiles } from "../controllers/file";
 
 const router = express.Router();
 
@@ -62,7 +62,7 @@ router.post(
   upload.single("file"),
   uploadFile
 );
-router.get("/file/list");
+router.get("/file/list", listFiles);
 router.delete("/file/delete/:id");
 router.get("/file/:id");
 router.get("/file/download/:id");

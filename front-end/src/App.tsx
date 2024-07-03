@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Info from "./components/Info";
 import Home from "./components/Home";
 import Latency from "./components/Latency";
+import Files from "./components/Files";
 import { useState } from "react";
 
 function App() {
@@ -47,6 +48,7 @@ function App() {
                 />
               }
             />
+            <Route path="/files" element={<Files signedIn={signedIn} />} />
           </Routes>
         </BrowserRouter>
       </div>

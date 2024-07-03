@@ -39,12 +39,28 @@ export const uploadFile = async (req: any, res: any) => {
 
 // Function to list files
 export const listFiles = async (req: any, res: any) => {
-  try {
-    const [files] = await connection.promise().query("SELECT * FROM files");
-    res.status(200).send(files);
-  } catch (err) {
-    console.error("Error listing files:", err);
-    res.status(500).send("Internal server error.");
+  if (isTokenBlacklisted(req.headers.authorization)) {
+    res.status(401).send("token is blacklisted");
+  } else {
+    let { page = 1, list_size = 10 } = req.query;
+    page = parseInt(page, 10);
+    list_size = parseInt(list_size, 10);
+
+    const offset = (page - 1) * list_size;
+
+    try {
+      const query = `SELECT id, file_name, file_extension, mime_type, file_size, upload_date FROM files LIMIT ? OFFSET ?`;
+      const [rows] = await connection
+        .promise()
+        .query(query, [list_size, offset]);
+      res.status(200).send({
+        success: true,
+        files: rows,
+      });
+    } catch (err) {
+      console.error("Error listing files:", err);
+      res.status(500).send("Internal server error.");
+    }
   }
 };
 
