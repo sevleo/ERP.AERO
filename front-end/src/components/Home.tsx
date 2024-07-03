@@ -14,7 +14,6 @@ function Home({ signedIn, setSignedIn, user, setUser }: any) {
     const accessToken = localStorage.getItem("accessToken");
     const refreshToken = localStorage.getItem("refreshToken");
 
-    console.log(accessToken);
     axios
       .get("http://localhost:3000/verify-token", {
         headers: {
@@ -23,10 +22,12 @@ function Home({ signedIn, setSignedIn, user, setUser }: any) {
         },
       })
       .then((res) => {
-        console.log(res);
         setSignedIn(true);
         setUser(res.data.user.id);
         setLoaded(true);
+
+        console.log(accessToken);
+        console.log(refreshToken);
       })
       .catch((err) => {
         console.log(err);
@@ -73,9 +74,9 @@ function Home({ signedIn, setSignedIn, user, setUser }: any) {
   };
 
   const [selectedFile, setSelectedFile] = useState(null);
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState("waiting to upload file...");
 
-  const handleFileChange = (e) => {
+  const handleFileChange = (e: any) => {
     setSelectedFile(e.target.files[0]);
   };
 
@@ -89,7 +90,6 @@ function Home({ signedIn, setSignedIn, user, setUser }: any) {
     formData.append("file", selectedFile);
 
     console.log(formData);
-    console.log(selectedFile);
 
     try {
       const response = await axios.post(
@@ -97,12 +97,12 @@ function Home({ signedIn, setSignedIn, user, setUser }: any) {
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
             authorization: localStorage.getItem("accessToken"),
           },
         }
       );
       setMessage(response.data.message);
+      console.log(response);
       // fetchFiles();
     } catch (err) {
       console.error("Error uploading file:", err);
@@ -154,8 +154,13 @@ function Home({ signedIn, setSignedIn, user, setUser }: any) {
         </div>
         <br />
         <div>
-          <input type="file" onChange={handleFileChange} />
+          <input
+            type="file"
+            onChange={handleFileChange}
+            onClick={() => setMessage("waiting to upload a file...")}
+          />
           <button onClick={handleUpload}>Upload</button>
+          <p>{message}</p>
         </div>
       </div>
     )

@@ -54,7 +54,12 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Files
-router.post("/file/upload", upload.single("file"), uploadFile);
+router.post(
+  "/file/upload",
+  passport.authenticate("jwt", { session: false }),
+  upload.single("file"),
+  uploadFile
+);
 router.get("/file/list");
 router.delete("/file/delete/:id");
 router.get("/file/:id");

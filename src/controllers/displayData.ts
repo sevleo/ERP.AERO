@@ -1,9 +1,16 @@
 import asyncHandler from "express-async-handler";
 import { calculateLatency } from "../helpers/calculateLatency";
+import { isTokenBlacklisted } from "../helpers/disableTokens";
 
 const info = asyncHandler(async (req: any, res: any) => {
   console.log("display data info");
   console.log(req.headers);
+
+  console.log(isTokenBlacklisted(req.headers.authorization));
+  if (isTokenBlacklisted(req.headers.authorization)) {
+    res.status(401).send("token is blacklisted");
+  }
+
   if (req.user) {
     try {
       res.status(200).send({
@@ -22,7 +29,13 @@ const info = asyncHandler(async (req: any, res: any) => {
 
 const latency = asyncHandler(async (req: any, res: any) => {
   console.log("display latency info");
-  console.log(req.headers);
+  console.log(req.headers.authorization);
+  console.log(isTokenBlacklisted(req.headers.authorization));
+
+  if (isTokenBlacklisted(req.headers.authorization)) {
+    res.status(401).send("token is blacklisted");
+  }
+
   const latency = calculateLatency();
   if (req.user) {
     try {

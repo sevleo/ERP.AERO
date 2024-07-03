@@ -18,8 +18,7 @@ function Info({ signedIn, setSignedIn, user, setUser }: any) {
           authorization: accessToken,
         },
       })
-      .then((res) => {
-        console.log(res);
+      .then(() => {
         axios
           .get("http://localhost:3000/info", {
             headers: {

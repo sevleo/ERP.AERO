@@ -17,6 +17,8 @@ function Signin({ setUser, setSignedIn }: any) {
         setErrorMessage("");
         setUser(user.data.username);
         setSignedIn(true);
+        console.log(user.data.accessToken);
+        console.log(user.data.refreshToken);
       })
       .catch((err) => {
         setErrorMessage(err.response.data.message);

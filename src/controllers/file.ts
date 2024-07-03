@@ -4,7 +4,10 @@ import connection from "../db";
 
 // Function to upload file
 export const uploadFile = async (req: any, res: any) => {
-  console.log(req);
+  console.log(req.file);
+  console.log(req.headers);
+
+  // Deconstructing req.file
   const { file } = req;
   const { originalname, mimetype, size, filename } = file;
 
