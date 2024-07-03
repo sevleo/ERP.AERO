@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Signin from "./Signin";
 import Signup from "./Signup";
 import { useNavigate } from "react-router-dom";
 
-function Home({ signedIn, setSignedIn, user, setUser }) {
+function Home({ signedIn, setSignedIn, user, setUser }: any) {
   const [loaded, setLoaded] = useState(false);
 
   const navigate = useNavigate();
@@ -29,7 +30,6 @@ function Home({ signedIn, setSignedIn, user, setUser }) {
       })
       .catch((err) => {
         console.log(err);
-        setLoaded(true);
         if (
           err.response.statusText === "Unauthorized" &&
           err.response.status === 401
@@ -46,13 +46,16 @@ function Home({ signedIn, setSignedIn, user, setUser }) {
               console.log(res);
               setUser(res.data.user.id);
               setSignedIn(true);
+              setLoaded(true);
             })
             .catch((err) => {
               console.log(err);
+              setLoaded(true);
             });
+          // setLoaded(true);
         }
       });
-  }, []);
+  }, [setSignedIn, setUser]);
 
   const handleLogout = () => {
     axios
@@ -68,6 +71,45 @@ function Home({ signedIn, setSignedIn, user, setUser }) {
         console.log(err);
       });
   };
+
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [message, setMessage] = useState("");
+
+  const handleFileChange = (e) => {
+    setSelectedFile(e.target.files[0]);
+  };
+
+  const handleUpload = async () => {
+    if (!selectedFile) {
+      setMessage("Please select a file first.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+
+    console.log(formData);
+    console.log(selectedFile);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/file/upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            authorization: localStorage.getItem("accessToken"),
+          },
+        }
+      );
+      setMessage(response.data.message);
+      // fetchFiles();
+    } catch (err) {
+      console.error("Error uploading file:", err);
+      setMessage("Error uploading file.");
+    }
+  };
+
   return (
     loaded && (
       <div>
@@ -93,20 +135,28 @@ function Home({ signedIn, setSignedIn, user, setUser }) {
             </div>
           </>
         )}
-        <button
-          onClick={() => {
-            navigate("/info");
-          }}
-        >
-          Info
-        </button>
-        <button
-          onClick={() => {
-            navigate("/latency");
-          }}
-        >
-          Latency
-        </button>
+        <div>
+          <button
+            onClick={() => {
+              navigate("/info");
+            }}
+          >
+            Info
+          </button>
+
+          <button
+            onClick={() => {
+              navigate("/latency");
+            }}
+          >
+            Latency
+          </button>
+        </div>
+        <br />
+        <div>
+          <input type="file" onChange={handleFileChange} />
+          <button onClick={handleUpload}>Upload</button>
+        </div>
       </div>
     )
   );

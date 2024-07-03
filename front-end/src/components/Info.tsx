@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function Info({ signedIn, setSignedIn, user, setUser }) {
+function Info({ signedIn, setSignedIn, user, setUser }: any) {
   const navigate = useNavigate();
   const [loaded, setLoaded] = useState(false);
 

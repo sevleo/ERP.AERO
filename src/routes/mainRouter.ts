@@ -3,7 +3,8 @@ import navigation from "../controllers/navigation";
 import auth from "../controllers/auth";
 import passport from "passport";
 import displayData from "../controllers/displayData";
-import { calculateLatency } from "../helpers/calculateLatency";
+import multer from "multer";
+import { uploadFile } from "../controllers/file";
 
 const router = express.Router();
 
@@ -41,6 +42,23 @@ router.get(
   displayData.latency
 );
 
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/");
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
+
+const upload = multer({ storage });
+
 // Files
+router.post("/file/upload", upload.single("file"), uploadFile);
+router.get("/file/list");
+router.delete("/file/delete/:id");
+router.get("/file/:id");
+router.get("/file/download/:id");
+router.put("/file/update/:id");
 
 export default router;

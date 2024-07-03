@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { useState } from "react";
 import axios from "axios";
 
-function Signin({ setUser, setSignedIn }) {
+function Signin({ setUser, setSignedIn }: any) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");

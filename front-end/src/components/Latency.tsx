@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function Latency({ signedIn, setSignedIn, user, setUser }) {
+function Latency({ signedIn, setSignedIn, setUser }: any) {
   //   const [latency, setLatency] = useState(null);
   const navigate = useNavigate();
   const [loaded, setLoaded] = useState(false);
