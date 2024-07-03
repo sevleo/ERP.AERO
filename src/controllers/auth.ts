@@ -2,12 +2,10 @@ import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import bcrypt from "bcrypt";
 import connection from "../db";
-import { v4 as uuidv4 } from "uuid";
 import {
   generateRefreshToken,
   generateSigninToken,
 } from "../helpers/generateTokens";
-import jwt from "jsonwebtoken";
 import { addToBlacklist, isTokenBlacklisted } from "../helpers/disableTokens";
 
 const signup = asyncHandler(async (req: Request, res: any) => {
@@ -112,7 +110,7 @@ const signin = asyncHandler(async (req: Request, res: any) => {
   }
 });
 
-export const logout = asyncHandler(async (req: any, res: any) => {
+const logout = asyncHandler(async (req: any, res: any) => {
   try {
     const accessToken = req.body.accessToken;
     const refreshToken = req.body.refreshToken;
@@ -131,7 +129,7 @@ export const logout = asyncHandler(async (req: any, res: any) => {
   }
 });
 
-export const refreshToken = asyncHandler(async (req: any, res: any) => {
+const refreshToken = asyncHandler(async (req: any, res: any) => {
   console.log(req);
 
   if (isTokenBlacklisted(req.headers.authorization)) {
@@ -188,7 +186,7 @@ export const refreshToken = asyncHandler(async (req: any, res: any) => {
 });
 
 // Return user if token is verified
-const verifyToken = asyncHandler(async (req: any, res: any) => {
+const verifyToken = asyncHandler(async (req: any, res: any, next: any) => {
   console.log(req);
 
   if (isTokenBlacklisted(req.headers.authorization)) {
@@ -199,6 +197,7 @@ const verifyToken = asyncHandler(async (req: any, res: any) => {
     });
   }
   if (req.user) {
+    // next()
     return res.status(200).send({
       success: true,
       user: {

@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Signin from "./Signin";
 import Signup from "./Signup";
-import React from "react";
+import { useNavigate } from "react-router-dom";
 
-function Home() {
-  const [signedIn, setSignedIn] = useState(false);
-  const [user, setUser] = useState("");
+function Home({ signedIn, setSignedIn, user, setUser }) {
   const [loaded, setLoaded] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
@@ -69,28 +69,46 @@ function Home() {
       });
   };
   return (
-    loaded &&
-    (signedIn ? (
-      <>
-        <div>
-          <h1>
-            Welcome back, <span>{user}</span>
-          </h1>
-          <p>
-            <button onClick={handleLogout}>Logout</button>
-          </p>
-        </div>
-      </>
-    ) : (
-      <>
-        <div>
-          <p>Welcome! Sign in to your account:</p>
-          <Signin setUser={setUser} setSignedIn={setSignedIn} />
-          <p>Don't have an account yet?</p>
-          <Signup setUser={setUser} setSignedIn={setSignedIn} />
-        </div>
-      </>
-    ))
+    loaded && (
+      <div>
+        {signedIn ? (
+          <>
+            <div>
+              <h1>
+                Welcome back, <span>{user}</span>
+              </h1>
+              <p>
+                <button onClick={handleLogout}>Logout</button>
+              </p>
+            </div>
+          </>
+        ) : (
+          <>
+            <div>
+              <h1>Welcome!</h1>
+              <p>Sign in to your account:</p>
+              <Signin setUser={setUser} setSignedIn={setSignedIn} />
+              <p>Don't have an account yet?</p>
+              <Signup setUser={setUser} setSignedIn={setSignedIn} />
+            </div>
+          </>
+        )}
+        <button
+          onClick={() => {
+            navigate("/info");
+          }}
+        >
+          Info
+        </button>
+        <button
+          onClick={() => {
+            navigate("/latency");
+          }}
+        >
+          Latency
+        </button>
+      </div>
+    )
   );
 }
 

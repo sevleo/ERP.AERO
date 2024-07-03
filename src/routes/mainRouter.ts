@@ -2,6 +2,8 @@ import express from "express";
 import navigation from "../controllers/navigation";
 import auth from "../controllers/auth";
 import passport from "passport";
+import displayData from "../controllers/displayData";
+import { calculateLatency } from "../helpers/calculateLatency";
 
 const router = express.Router();
 
@@ -9,27 +11,36 @@ const router = express.Router();
 router.get("/", navigation.home);
 router.get("/signup", navigation.signup);
 
-// SignUp API
+// Auth API
 router.post("/signup", auth.signup);
-
-// SignIn API
 router.post("/signin", auth.signin);
-
-// Lougout API
 router.post("/logout", auth.logout);
 
-// Refresh Token API
+// Bearer tokens API
 router.get(
   "/signin/new_token",
   passport.authenticate("jwt", { session: false }),
   auth.refreshToken
 );
-
-// Verify Token API
 router.get(
   "/verify-token",
   passport.authenticate("jwt", { session: false }),
   auth.verifyToken
 );
+
+// Services
+router.get(
+  "/info",
+  passport.authenticate("jwt", { session: false }),
+  displayData.info
+);
+
+router.get(
+  "/latency",
+  passport.authenticate("jwt", { session: false }),
+  displayData.latency
+);
+
+// Files
 
 export default router;
