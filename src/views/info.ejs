@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('header') %>
+  <body>
+    <div>
+      <% if (user) { %>
+      <p>Welcome back to info, <%= user %></p>
+      <% } else { %>
+      <p>Welcome to info</p>
+
+      <% } %>
+    </div>
+    <br />
+  </body>
+</html>

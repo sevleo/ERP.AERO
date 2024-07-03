@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import bcrypt from "bcrypt";
 import connection from "../db";
-import { User } from "../models/user";
 import { v4 as uuidv4 } from "uuid";
 import {
   generateRefreshToken,
@@ -11,7 +10,7 @@ import {
 import jwt from "jsonwebtoken";
 
 const signup = asyncHandler(async (req: Request, res: any) => {
-  const { username, password }: User = req.body;
+  const { username, password } = req.body;
 
   if (!username || !password) {
     return res
@@ -31,8 +30,6 @@ const signup = asyncHandler(async (req: Request, res: any) => {
 
     // Hash the password with bcrypt, using 10 rounds of salt
     const hashedPassword = await bcrypt.hash(password, 10);
-    // console.log(password);
-    // console.log(hashedPassword);
 
     // Generate user id
     const newId = uuidv4();
@@ -51,8 +48,7 @@ const signup = asyncHandler(async (req: Request, res: any) => {
 });
 
 const signin = asyncHandler(async (req: Request, res: any) => {
-  console.log(req);
-  const { username, password }: User = req.body;
+  const { username, password } = req.body;
 
   if (!username || !password) {
     return res
@@ -64,7 +60,7 @@ const signin = asyncHandler(async (req: Request, res: any) => {
     // Check if user exists
     const [rows] = await connection
       .promise()
-      .query<User[]>("SELECT * FROM users WHERE username = ?", [username]);
+      .query<any>("SELECT * FROM users WHERE username = ?", [username]);
 
     const user = rows[0];
 
@@ -74,18 +70,27 @@ const signin = asyncHandler(async (req: Request, res: any) => {
 
     // Validate password
     const validPassword = await bcrypt.compare(password, user.password);
-    // console.log(password);
-    // console.log(user.password);
 
     if (!validPassword) {
       return res.status(401).json({ message: "Invalid password." });
     }
 
-    // Generate tokens
-    const accessToken = generateSigninToken(user.id);
-    const refreshToken = generateRefreshToken(user.id);
+    const payload = {
+      username: user.username,
+      id: user.id,
+    };
 
-    res.json({ accessToken, refreshToken });
+    // Generate tokens
+    const accessToken = generateSigninToken(payload);
+    const refreshToken = generateRefreshToken(payload);
+
+    // res.json({ accessToken, refreshToken });
+
+    res.status(200).send({
+      success: true,
+      message: "Logged in successfully",
+      token: "Bearer " + accessToken,
+    });
   } catch (err) {
     console.error("Error signing in:", err);
     res.status(500).send("Internal server error.");

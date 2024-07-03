@@ -16,11 +16,10 @@ const handleLogin = async (event) => {
 
     const data = await response.json();
 
-    console.log(data);
     if (response.ok) {
       localStorage.setItem("accessToken", data.accessToken);
       localStorage.setItem("refreshToken", data.refreshToken);
-      window.location.href = "/"; // Redirect to dashboard on success
+      window.location.href = "/";
     } else {
       document.getElementById("loginMessage").textContent = data.message;
     }
@@ -71,4 +70,39 @@ document.addEventListener("DOMContentLoaded", () => {
   if (signupForm) {
     signupForm.addEventListener("submit", handleSignup);
   }
+});
+
+// Function to fetch home page data
+const fetchHomePageData = async () => {
+  try {
+    const accessToken = localStorage.getItem("accessToken");
+    const headers = {
+      "Content-Type": "application/json",
+    };
+
+    if (accessToken) {
+      headers["Authorization"] = `Bearer ${accessToken}`;
+    }
+
+    const response = await fetch("/", {
+      method: "GET",
+      headers: headers,
+    });
+
+    // if (response.ok) {
+    //   const data = await response.json();
+    //   console.log("User data:", data);
+    //   // Handle rendering of logged-in or login page based on response
+    // } else {
+    //   console.error("Failed to fetch home page data:", response.statusText);
+    //   // Handle error and redirect to login page if necessary
+    // }
+  } catch (error) {
+    console.error("Error fetching home page data:", error);
+  }
+};
+
+// Call fetchHomePageData when the DOM content is loaded
+document.addEventListener("DOMContentLoaded", () => {
+  fetchHomePageData();
 });
