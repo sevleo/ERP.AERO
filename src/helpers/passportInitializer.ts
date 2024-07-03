@@ -1,15 +1,17 @@
 import passport from "passport";
 import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
 import connection from "../db";
-import asyncHandler from "express-async-handler";
 
 const opts = {
-  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  // jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  jwtFromRequest: ExtractJwt.fromHeader("authorization"),
+
   secretOrKey: process.env.ACCESS_TOKEN_SECRET!,
 };
 
 passport.use(
   new JwtStrategy(opts, async (jwt_payload, done) => {
+    console.log(jwt_payload);
     try {
       const userId = jwt_payload.payload.id;
 

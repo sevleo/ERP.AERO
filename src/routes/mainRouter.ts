@@ -18,22 +18,11 @@ router.post("/signin", auth.signin);
 // Refresh Token API
 router.post("/signin/new_token", auth.refreshToken);
 
-// Protected routes
+// Check if tokens are valid
 router.get(
-  "/protected",
+  "/verify-token",
   passport.authenticate("jwt", { session: false }),
-  (req, res) => {
-    console.log(req.user);
-    if (req.user) {
-      return res.status(200).send({
-        success: true,
-        user: {
-          id: req.user.id,
-          username: req.user.username,
-        },
-      });
-    }
-  }
+  auth.verifyToken
 );
 router.get("/info", navigation.info);
 

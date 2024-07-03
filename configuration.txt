@@ -141,6 +141,7 @@ git push -u origin main
 	Vite & React:
 
 npm create vite@latest my-first-react-app -- --template react
+npm create vite@latest my-first-react-app -- --template react-ts
 
 npm install --save prop-types
 	import PropTypes from 'prop-types';

@@ -40,10 +40,25 @@ const signup = asyncHandler(async (req: Request, res: any) => {
       .promise()
       .query(insertQuery, [newId, username, hashedPassword]);
 
-    res.status(201).json({ message: "User created successfully." });
+    const payload = {
+      username: username,
+      id: newId,
+    };
+
+    // Generate tokens
+    const accessToken = generateSigninToken(payload);
+    const refreshToken = generateRefreshToken(payload);
+
+    res.status(200).send({
+      success: true,
+      message: "User created successfully.",
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+      username: username,
+    });
   } catch (err) {
     console.error("Error signing up:", err);
-    res.status(500).json({ message: "Internal server error." });
+    res.status(500).send("Internal server error.");
   }
 });
 
@@ -89,7 +104,9 @@ const signin = asyncHandler(async (req: Request, res: any) => {
     res.status(200).send({
       success: true,
       message: "Logged in successfully",
-      token: "Bearer " + accessToken,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+      username: user.username,
     });
   } catch (err) {
     console.error("Error signing in:", err);
@@ -118,10 +135,28 @@ export const refreshToken = asyncHandler(async (req: any, res: any) => {
   );
 });
 
+const verifyToken = asyncHandler(async (req: any, res: any) => {
+  if (req.user) {
+    return res.status(200).send({
+      success: true,
+      user: {
+        id: req.user.id,
+        username: req.user.username,
+      },
+    });
+  } else {
+    return res.status(401).send({
+      success: false,
+      message: "Unauthorized",
+    });
+  }
+});
+
 const auth = {
   signup,
   signin,
   refreshToken,
+  verifyToken,
 };
 
 export default auth;
