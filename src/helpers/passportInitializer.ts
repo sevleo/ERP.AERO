@@ -22,13 +22,13 @@ passport.use(
 
       if ((rows as any[]).length > 0) {
         console.log(rows[0]);
-        return done(null, rows[0]); // Return the user object if found
+        return done(null, rows[0]);
       } else {
-        return done(null, false); // User not found
+        return done(null, false);
       }
     } catch (error) {
       console.error("Error fetching user:", error);
-      return done(error, false); // Pass error to done callback
+      return done(error, false);
     }
   })
 );

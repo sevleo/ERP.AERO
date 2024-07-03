@@ -30,6 +30,27 @@ function Home() {
       .catch((err) => {
         console.log(err);
         setLoaded(true);
+        if (
+          err.response.statusText === "Unauthorized" &&
+          err.response.status === 401
+        ) {
+          console.log(err.response.statusText);
+          axios
+            .get("http://localhost:3000/signin/new_token", {
+              headers: {
+                authorization: refreshToken,
+              },
+            })
+            .then((res) => {
+              localStorage.setItem("accessToken", res.data.accessToken);
+              console.log(res);
+              setUser(res.data.user.id);
+              setSignedIn(true);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
       });
   }, []);
 

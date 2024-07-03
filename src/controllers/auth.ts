@@ -132,31 +132,67 @@ export const logout = asyncHandler(async (req: any, res: any) => {
 });
 
 export const refreshToken = asyncHandler(async (req: any, res: any) => {
-  const { token }: { token: string } = req.body;
+  console.log(req);
 
-  if (!token) {
-    return res.sendStatus(401);
+  if (isTokenBlacklisted(req.headers.authorization)) {
+    console.log("token is blacklisted");
+    return res.status(401).send({
+      success: false,
+      message: "Unauthorized",
+    });
+  }
+  if (req.user) {
+    console.log(req.user);
+    const payload = {
+      id: req.user.id,
+      password: req.user.password,
+    };
+    const accessToken = generateSigninToken(payload);
+    return res.status(200).send({
+      success: true,
+      user: {
+        id: req.user.id,
+      },
+      accessToken: accessToken,
+    });
+  } else {
+    console.log("token is expired");
+    return res.status(401).send({
+      success: false,
+      message: "Unauthorized",
+    });
   }
 
-  jwt.verify(
-    token,
-    process.env.REFRESH_TOKEN_SECRET!,
-    (err: any, user: any) => {
-      if (err) {
-        return res.sendStatus(403);
-      }
+  // try {
+  //   jwt.verify(
+  //     token,
+  //     process.env.REFRESH_TOKEN_SECRET!,
+  //     (err: any, user: any) => {
+  //       if (err) {
+  //         return res.sendStatus(401);
+  //       }
 
-      const accessToken = generateSigninToken(user.username);
-      res.json({ accessToken });
-    }
-  );
+  //       const payload = {
+  //         id: user.id,
+  //         password: user.password,
+  //       };
+
+  //       const accessToken = generateSigninToken(payload);
+  //       res.json({ accessToken });
+  //     }
+  //   );
+  // } catch (err) {
+  //   console.error("Error refreshing token:", err);
+  //   res.status(500).send("Internal server error");
+  // }
 });
 
 // Return user if token is verified
 const verifyToken = asyncHandler(async (req: any, res: any) => {
-  console.log(req.headers);
+  console.log(req);
 
   if (isTokenBlacklisted(req.headers.authorization)) {
+    console.log("token is blacklisted");
     return res.status(401).send({
       success: false,
       message: "Unauthorized",
@@ -170,6 +206,7 @@ const verifyToken = asyncHandler(async (req: any, res: any) => {
       },
     });
   } else {
+    console.log("token is expired");
     return res.status(401).send({
       success: false,
       message: "Unauthorized",

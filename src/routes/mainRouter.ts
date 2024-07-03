@@ -19,7 +19,11 @@ router.post("/signin", auth.signin);
 router.post("/logout", auth.logout);
 
 // Refresh Token API
-router.post("/signin/new_token", auth.refreshToken);
+router.get(
+  "/signin/new_token",
+  passport.authenticate("jwt", { session: false }),
+  auth.refreshToken
+);
 
 // Verify Token API
 router.get(
