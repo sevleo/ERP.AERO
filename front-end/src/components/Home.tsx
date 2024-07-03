@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Signin from "./Signin";
 import Signup from "./Signup";
+import React from "react";
 
 function Home() {
   const [signedIn, setSignedIn] = useState(false);
@@ -10,11 +11,14 @@ function Home() {
 
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
+    const refreshToken = localStorage.getItem("refreshToken");
+
     console.log(accessToken);
     axios
       .get("http://localhost:3000/verify-token", {
         headers: {
           authorization: accessToken,
+          refreshToken: refreshToken,
         },
       })
       .then((res) => {
@@ -28,6 +32,21 @@ function Home() {
         setLoaded(true);
       });
   }, []);
+
+  const handleLogout = () => {
+    axios
+      .post("http://localhost:3000/logout", {
+        accessToken: localStorage.getItem("accessToken"),
+        refreshToken: localStorage.getItem("refreshToken"),
+      })
+      .then(() => {
+        setSignedIn(false);
+        setUser("");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   return (
     loaded &&
     (signedIn ? (
@@ -36,7 +55,9 @@ function Home() {
           <h1>
             Welcome back, <span>{user}</span>
           </h1>
-          <p></p>
+          <p>
+            <button onClick={handleLogout}>Logout</button>
+          </p>
         </div>
       </>
     ) : (

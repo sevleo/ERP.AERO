@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import React from "react";
 
 function Signup({ setUser, setSignedIn }) {
   const [username, setUsername] = useState("");

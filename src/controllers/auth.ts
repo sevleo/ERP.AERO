@@ -8,6 +8,7 @@ import {
   generateSigninToken,
 } from "../helpers/generateTokens";
 import jwt from "jsonwebtoken";
+import { addToBlacklist, isTokenBlacklisted } from "../helpers/disableTokens";
 
 const signup = asyncHandler(async (req: Request, res: any) => {
   const { username, password } = req.body;
@@ -114,6 +115,25 @@ const signin = asyncHandler(async (req: Request, res: any) => {
   }
 });
 
+export const logout = asyncHandler(async (req: any, res: any) => {
+  try {
+    const accessToken = req.body.accessToken;
+    const refreshToken = req.body.refreshToken;
+
+    if (!accessToken || !refreshToken) {
+      return res.sendStatus(401);
+    }
+
+    addToBlacklist(accessToken);
+    addToBlacklist(refreshToken);
+
+    res.status(200).json({ message: "Logged out successfully." });
+  } catch (err) {
+    console.error("Error loggig out: ", err);
+    res.status(500).send("Internal server error");
+  }
+});
+
 export const refreshToken = asyncHandler(async (req: any, res: any) => {
   const { token }: { token: string } = req.body;
 
@@ -135,7 +155,16 @@ export const refreshToken = asyncHandler(async (req: any, res: any) => {
   );
 });
 
+// Return user if token is verified
 const verifyToken = asyncHandler(async (req: any, res: any) => {
+  console.log(req.headers);
+
+  if (isTokenBlacklisted(req.headers.authorization)) {
+    return res.status(401).send({
+      success: false,
+      message: "Unauthorized",
+    });
+  }
   if (req.user) {
     return res.status(200).send({
       success: true,
@@ -155,6 +184,7 @@ const verifyToken = asyncHandler(async (req: any, res: any) => {
 const auth = {
   signup,
   signin,
+  logout,
   refreshToken,
   verifyToken,
 };

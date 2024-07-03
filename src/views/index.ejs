@@ -3,9 +3,6 @@
   <%- include('header') %>
   <body>
     <div>
-      <% if (user) { %>
-      <p>Welcome back, <%= user %></p>
-      <% } else { %>
       <p>Welcome</p>
       <p>Sign in to your account</p>
       <form id="loginForm" action="/signin" method="POST">
@@ -19,7 +16,6 @@
         Don't have an account? <span><a href="/signup">Sign Up Now</a></span>
       </p>
       <p id="loginMessage"></p>
-      <% } %>
     </div>
     <br />
   </body>

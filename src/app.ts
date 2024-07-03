@@ -12,11 +12,11 @@ import cors from "cors";
 
 const app = express();
 
-app.use((req: any, res: any, next) => {
-  res.locals.currentUser = req.user;
-  console.log(res.locals);
-  next();
-});
+// app.use((req: any, res: any, next) => {
+//   res.locals.currentUser = req.user;
+//   console.log(res.locals);
+//   next();
+// });
 
 app.use(passport.initialize());
 
