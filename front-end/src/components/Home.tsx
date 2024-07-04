@@ -53,7 +53,6 @@ function Home({ signedIn, setSignedIn, user, setUser }: any) {
               console.log(err);
               setLoaded(true);
             });
-          // setLoaded(true);
         }
       });
   }, [setSignedIn, setUser]);

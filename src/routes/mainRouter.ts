@@ -58,7 +58,7 @@ const upload = multer({ storage });
 // Files
 router.post(
   "/file/upload",
-  passport.authenticate("jwt", { session: false }),
+  // passport.authenticate("jwt", { session: false }),
   upload.single("file"),
   uploadFile
 );

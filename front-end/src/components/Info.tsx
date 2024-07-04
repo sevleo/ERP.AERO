@@ -13,25 +13,16 @@ function Info({ signedIn, setSignedIn, user, setUser }: any) {
     const refreshToken = localStorage.getItem("refreshToken");
 
     axios
-      .get("http://localhost:3000/verify-token", {
+      .get("http://localhost:3000/info", {
         headers: {
           authorization: accessToken,
         },
       })
-      .then(() => {
-        axios
-          .get("http://localhost:3000/info", {
-            headers: {
-              authorization: accessToken,
-              refreshToken: refreshToken,
-            },
-          })
-          .then((res) => {
-            console.log(res);
-            setUser(res.data.userId);
-            setSignedIn(true);
-            setLoaded(true);
-          });
+      .then((res) => {
+        console.log(res);
+        setUser(res.data.userId);
+        setSignedIn(true);
+        setLoaded(true);
       })
       .catch((err) => {
         console.log(err);

@@ -16,27 +16,17 @@ function Latency({ signedIn, setSignedIn, setUser }: any) {
     const refreshToken = localStorage.getItem("refreshToken");
 
     axios
-      .get("http://localhost:3000/verify-token", {
+      .get("http://localhost:3000/latency", {
         headers: {
           authorization: accessToken,
+          refreshToken: refreshToken,
         },
       })
       .then((res) => {
-        console.log(res);
-        axios
-          .get("http://localhost:3000/latency", {
-            headers: {
-              authorization: accessToken,
-              refreshToken: refreshToken,
-            },
-          })
-          .then((res) => {
-            console.log(res);
-            setUser(res.data.userId);
-            setSignedIn(true);
-            setLoaded(true);
-            setLatency(res.data.latency);
-          });
+        setUser(res.data.userId);
+        setSignedIn(true);
+        setLoaded(true);
+        setLatency(res.data.latency);
       })
       .catch((err) => {
         console.log(err);

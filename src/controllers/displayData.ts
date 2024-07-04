@@ -38,6 +38,7 @@ const latency = asyncHandler(async (req: any, res: any) => {
 
   const latency = calculateLatency();
   if (req.user) {
+    console.log(req.user);
     try {
       res.status(200).send({
         success: true,
