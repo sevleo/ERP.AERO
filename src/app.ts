@@ -12,11 +12,17 @@ import cors from "cors";
 
 const app = express();
 
-// app.use((req: any, res: any, next) => {
-//   res.locals.currentUser = req.user;
-//   console.log(res.locals);
-//   next();
-// });
+// Allow credentials (cookies, authorization headers, etc.)
+
+const corsOptions = {
+  origin: true, // This allows requests from any origin
+  methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
+  credentials: true,
+};
+
+app.options("*", cors(corsOptions));
+
+app.use(cors(corsOptions));
 
 app.use(passport.initialize());
 
@@ -40,10 +46,8 @@ app.set("view engine", "ejs");
 // Declare routes
 app.use("/", mainRouter);
 
-const PORT = process.env.PORT || 3000; // Default port 3000 if not specified
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log("app listening on port 3001!"));
 
 app.listen(PORT as any, "0.0.0.0", () => {
   console.log(`Server is running on http://0.0.0.0:${PORT}`);
