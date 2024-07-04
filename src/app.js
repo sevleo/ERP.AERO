@@ -1,14 +1,13 @@
-import dotenv from "dotenv";
-dotenv.config();
-import express from "express";
-import "./db";
-import "./models/user";
-import bodyParser from "body-parser";
-import path from "path";
-import mainRouter from "./routes/mainRouter";
+require("dotenv").config();
+const express = require("express");
+require("./db");
+require("./models/user");
+const bodyParser = require("body-parser");
+const path = require("path");
+const mainRouter = require("./routes/mainRouter");
 
-import passport from "passport";
-import cors from "cors";
+const passport = require("passport");
+const cors = require("cors");
 
 const app = express();
 
@@ -27,7 +26,7 @@ app.options("*", cors(corsOptions));
 
 app.use(passport.initialize());
 
-import "./helpers/passportInitializer";
+require("./helpers/passportInitializer");
 
 // Body parser middleware - we need it to see body from the requests
 app.use(bodyParser.json());
@@ -45,7 +44,7 @@ app.set("view engine", "ejs");
 // Declare routes
 app.use("/", mainRouter);
 
-app.use((err: any, req: any, res: any, next: any) => {
+app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send("Internal Server Error");
 });

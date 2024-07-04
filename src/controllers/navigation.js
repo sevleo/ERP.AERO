@@ -1,4 +1,4 @@
-import asyncHandler from "express-async-handler";
+const asyncHandler = require("express-async-handler");
 
 const home = asyncHandler(async (req, res) => {
   console.log(req.headers);
@@ -14,4 +14,4 @@ const navigation = {
   signup,
 };
 
-export default navigation;
+module.exports = navigation;

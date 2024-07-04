@@ -1,15 +1,17 @@
-import { Request, Response } from "express";
-import asyncHandler from "express-async-handler";
-import bcrypt from "bcrypt";
-import connection from "../db";
-import {
+const asyncHandler = require("express-async-handler");
+const bcrypt = require("bcrypt");
+const connection = require("../db");
+const {
   generateRefreshToken,
   generateSigninToken,
-} from "../helpers/generateTokens";
-import { addToBlacklist, isTokenBlacklisted } from "../helpers/disableTokens";
-import validator from "validator";
+} = require("../helpers/generateTokens");
+const {
+  addToBlacklist,
+  isTokenBlacklisted,
+} = require("../helpers/disableTokens");
+const validator = require("validator");
 
-const signup = asyncHandler(async (req: Request, res: any) => {
+const signup = asyncHandler(async (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
@@ -33,7 +35,7 @@ const signup = asyncHandler(async (req: Request, res: any) => {
       .promise()
       .query("SELECT * FROM users WHERE id = ?", [username]);
 
-    if ((rows as any[]).length > 0) {
+    if (rows.length > 0) {
       return res.status(409).json({ message: "Username already exists." });
     }
 
@@ -68,7 +70,7 @@ const signup = asyncHandler(async (req: Request, res: any) => {
   }
 });
 
-const signin = asyncHandler(async (req: Request, res: any) => {
+const signin = asyncHandler(async (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
@@ -81,7 +83,7 @@ const signin = asyncHandler(async (req: Request, res: any) => {
     // Check if user exists
     const [rows] = await connection
       .promise()
-      .query<any>("SELECT * FROM users WHERE id = ?", [username]);
+      .query("SELECT * FROM users WHERE id = ?", [username]);
 
     const user = rows[0];
 
@@ -120,7 +122,7 @@ const signin = asyncHandler(async (req: Request, res: any) => {
   }
 });
 
-const logout = asyncHandler(async (req: any, res: any) => {
+const logout = asyncHandler(async (req, res) => {
   try {
     const accessToken = req.body.accessToken;
     const refreshToken = req.body.refreshToken;
@@ -139,7 +141,7 @@ const logout = asyncHandler(async (req: any, res: any) => {
   }
 });
 
-const refreshToken = asyncHandler(async (req: any, res: any) => {
+const refreshToken = asyncHandler(async (req, res) => {
   console.log(req);
 
   if (isTokenBlacklisted(req.headers.authorization)) {
@@ -173,7 +175,7 @@ const refreshToken = asyncHandler(async (req: any, res: any) => {
 });
 
 // Return user if token is verified
-const verifyToken = asyncHandler(async (req: any, res: any, next: any) => {
+const verifyToken = asyncHandler(async (req, res, next) => {
   console.log(req);
 
   if (isTokenBlacklisted(req.headers.authorization)) {
@@ -209,4 +211,4 @@ const auth = {
   verifyToken,
 };
 
-export default auth;
+module.exports = auth;

@@ -1,9 +1,9 @@
-import asyncHandler from "express-async-handler";
-import { calculateLatency } from "../helpers/calculateLatency";
-import { isTokenBlacklisted } from "../helpers/disableTokens";
-import { authorize } from "passport";
+const asyncHandler = require("express-async-handler");
+const calculateLatency = require("../helpers/calculateLatency");
+const { isTokenBlacklisted } = require("../helpers/disableTokens");
+const passport = require("passport");
 
-const info = asyncHandler(async (req: any, res: any) => {
+const info = asyncHandler(async (req, res) => {
   console.log("display data info");
   console.log(req);
 
@@ -30,7 +30,7 @@ const info = asyncHandler(async (req: any, res: any) => {
   }
 });
 
-const latency = asyncHandler(async (req: any, res: any) => {
+const latency = asyncHandler(async (req, res) => {
   console.log("display latency info");
   console.log(req.headers.authorization);
   console.log(isTokenBlacklisted(req.headers.authorization));
@@ -63,4 +63,4 @@ const displayData = {
   info,
   latency,
 };
-export default displayData;
+module.exports = displayData;

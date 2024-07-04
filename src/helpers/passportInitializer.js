@@ -1,12 +1,13 @@
-import passport from "passport";
-import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
-import connection from "../db";
+const passport = require("passport");
+const JwtStrategy = require("passport-jwt").Strategy;
+const ExtractJwt = require("passport-jwt").ExtractJwt;
+const connection = require("../db");
 
 const opts = {
   // jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   jwtFromRequest: ExtractJwt.fromHeader("authorization"),
 
-  secretOrKey: process.env.ACCESS_TOKEN_SECRET!,
+  secretOrKey: process.env.ACCESS_TOKEN_SECRET,
 };
 
 passport.use(
@@ -18,9 +19,9 @@ passport.use(
       // Query user from the database
       const [rows] = await connection
         .promise()
-        .query<any>("SELECT * FROM users WHERE id = ?", [userId]);
+        .query("SELECT * FROM users WHERE id = ?", [userId]);
 
-      if ((rows as any[]).length > 0) {
+      if (rows.length > 0) {
         console.log(rows[0]);
         return done(null, rows[0]);
       } else {

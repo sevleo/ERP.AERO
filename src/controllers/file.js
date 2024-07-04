@@ -1,12 +1,12 @@
-import fs from "fs";
-import path from "path";
-import connection from "../db";
-import { isTokenBlacklisted } from "../helpers/disableTokens";
-import multer from "multer";
-import contentDisposition from "content-disposition";
+const fs = require("fs");
+const path = require("path");
+const connection = require("../db"); // Assuming 'db' is exported as default
+const { isTokenBlacklisted } = require("../helpers/disableTokens");
+const multer = require("multer");
+const contentDisposition = require("content-disposition");
 
 // Function to upload file
-export const uploadFile = async (req: any, res: any) => {
+const uploadFile = async (req, res) => {
   console.log(req);
   console.log(req.file);
   console.log(req.headers);
@@ -45,7 +45,7 @@ export const uploadFile = async (req: any, res: any) => {
 };
 
 // Function to list files
-export const listFiles = async (req: any, res: any) => {
+const listFiles = async (req, res) => {
   console.log(req);
   if (isTokenBlacklisted(req.headers.authorization)) {
     res.status(401).send("token is blacklisted");
@@ -64,7 +64,7 @@ export const listFiles = async (req: any, res: any) => {
         .query(query, [list_size, offset]);
       const [countResult] = await connection.promise().query(countQuery);
 
-      const totalFiles = (countResult as any)[0].count;
+      const totalFiles = countResult[0].count;
       const totalPages = Math.ceil(totalFiles / list_size);
 
       res.status(200).send({
@@ -84,7 +84,7 @@ export const listFiles = async (req: any, res: any) => {
 };
 
 // Function to delete file
-export const deleteFile = async (req: any, res: any) => {
+const deleteFile = async (req, res) => {
   if (isTokenBlacklisted(req.headers.authorization)) {
     res.status(401).send("token is blacklisted");
   } else {
@@ -95,17 +95,13 @@ export const deleteFile = async (req: any, res: any) => {
         .promise()
         .query("SELECT * FROM files WHERE id = ?", [id]);
 
-      if ((file as any).length === 0) {
+      if (file.length === 0) {
         return res
           .status(404)
           .send({ success: false, message: "File not found." });
       }
 
-      const filePath = path.join(
-        __dirname,
-        "../../uploads/",
-        (file as any)[0].filename
-      );
+      const filePath = path.join(__dirname, "../../uploads/", file[0].filename);
 
       fs.unlink(filePath, async (err) => {
         if (err) {
@@ -130,7 +126,7 @@ export const deleteFile = async (req: any, res: any) => {
 };
 
 // Function to get file details
-export const getFile = async (req: any, res: any) => {
+const getFile = async (req, res) => {
   if (isTokenBlacklisted(req.headers.authorization)) {
     res.status(401).send("token is blacklisted");
   } else {
@@ -140,7 +136,7 @@ export const getFile = async (req: any, res: any) => {
       const [file] = await connection
         .promise()
         .query("SELECT * FROM files WHERE id = ?", [id]);
-      if ((file as any).length === 0) {
+      if (file.length === 0) {
         return res
           .status(404)
           .send({ success: false, message: "File not found." });
@@ -150,7 +146,7 @@ export const getFile = async (req: any, res: any) => {
 
       res.status(200).send({
         success: true,
-        file: (file as any)[0],
+        file: file[0],
         newAccessToken: req.newAccessToken,
       });
     } catch (err) {
@@ -161,7 +157,7 @@ export const getFile = async (req: any, res: any) => {
 };
 
 // Function to download file
-export const downloadFile = async (req: any, res: any) => {
+const downloadFile = async (req, res) => {
   if (isTokenBlacklisted(req.headers.authorization)) {
     res.status(401).send("token is blacklisted");
   } else {
@@ -172,15 +168,15 @@ export const downloadFile = async (req: any, res: any) => {
         .promise()
         .query("SELECT * FROM files WHERE id = ?", [id]);
 
-      if ((file as any).length === 0) {
+      if (file.length === 0) {
         return res
           .status(404)
           .send({ success: false, message: "File not found." });
       }
 
-      const fileName = (file as any)[0].filename;
+      const fileName = file[0].filename;
       const filePath = path.join(__dirname, "../../uploads/", fileName);
-      const file_name = (file as any)[0].file_name;
+      const file_name = file[0].file_name;
 
       if (!fs.existsSync(filePath)) {
         return res
@@ -197,7 +193,7 @@ export const downloadFile = async (req: any, res: any) => {
 };
 
 // Function to update file
-export const updateFile = async (req: any, res: any) => {
+const updateFile = async (req, res) => {
   console.log(req);
   console.log(req.file);
   console.log(req.headers);
@@ -214,7 +210,7 @@ export const updateFile = async (req: any, res: any) => {
       const [existingFile] = await connection
         .promise()
         .query("SELECT * FROM files WHERE id = ?", [id]);
-      if ((existingFile as any).length === 0) {
+      if (existingFile.length === 0) {
         return res
           .status(404)
           .send({ success: false, message: "File not found." });
@@ -224,7 +220,7 @@ export const updateFile = async (req: any, res: any) => {
       const oldFilePath = path.join(
         __dirname,
         "../../uploads/",
-        (existingFile as any)[0].filename
+        existingFile[0].filename
       );
       if (fs.existsSync(oldFilePath)) {
         fs.unlinkSync(oldFilePath);
@@ -256,4 +252,13 @@ export const updateFile = async (req: any, res: any) => {
       res.status(500).send("Internal server error.");
     }
   }
+};
+
+module.exports = {
+  uploadFile,
+  listFiles,
+  deleteFile,
+  getFile,
+  downloadFile,
+  updateFile,
 };

@@ -1,18 +1,18 @@
-import express from "express";
-import navigation from "../controllers/navigation";
-import auth from "../controllers/auth";
-import passport from "passport";
-import displayData from "../controllers/displayData";
-import multer from "multer";
-import {
+const express = require("express");
+const navigation = require("../controllers/navigation");
+const auth = require("../controllers/auth");
+const passport = require("passport");
+const displayData = require("../controllers/displayData");
+const multer = require("multer");
+const {
   uploadFile,
   listFiles,
   deleteFile,
   getFile,
   downloadFile,
   updateFile,
-} from "../controllers/file";
-import { authenticateWithRefresh } from "../helpers/authenticateWithRefreshToken";
+} = require("../controllers/file");
+const authenticateWithRefresh = require("../helpers/authenticateWithRefreshToken");
 
 const router = express.Router();
 
@@ -106,4 +106,4 @@ router.put(
   updateFile
 );
 
-export default router;
+module.exports = router;
