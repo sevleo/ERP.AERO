@@ -10,6 +10,7 @@ import {
   deleteFile,
   getFile,
   downloadFile,
+  updateFile,
 } from "../controllers/file";
 
 const router = express.Router();
@@ -61,12 +62,10 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// upload.single("file");
-
 // Files
 router.post(
   "/file/upload",
-  // passport.authenticate("jwt", { session: false }),
+  passport.authenticate("jwt", { session: false }),
   upload.single("file"),
   uploadFile
 );
@@ -90,6 +89,11 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   downloadFile
 );
-router.put("/file/update/:id");
+router.put(
+  "/file/update/:id",
+  passport.authenticate("jwt", { session: false }),
+  upload.single("file"),
+  updateFile
+);
 
 export default router;

@@ -8,6 +8,43 @@ export default function FileDetails({ signedIn, setSignedIn, setUser }: any) {
   const navigate = useNavigate();
   const [loaded, setLoaded] = useState(false);
   const [file, setFile] = useState<any>(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [message, setMessage] = useState("waiting to upload file...");
+
+  const handleFileChange = (e: any) => {
+    setSelectedFile(e.target.files[0]);
+  };
+
+  const updateFile = async (fileId: string) => {
+    if (!selectedFile) {
+      setMessage("Please select a file first.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", selectedFile as any);
+
+    console.log(fileId);
+    console.log(selectedFile);
+
+    try {
+      const response = await axios.put(
+        `http://localhost:3000/file/update/${fileId}`,
+        formData,
+        {
+          headers: {
+            authorization: localStorage.getItem("accessToken"),
+          },
+        }
+      );
+      console.log(response);
+      setMessage("File updated successfully.");
+      fetchFileDetails(localStorage.getItem("accessToken") as string, fileId);
+    } catch (err) {
+      console.error("Error uploading file:", err);
+      setMessage("Error updating file.");
+    }
+  };
 
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
@@ -86,6 +123,14 @@ export default function FileDetails({ signedIn, setSignedIn, setUser }: any) {
                 {/* <p>Name in the local storage: {file.filename}</p> */}
 
                 <button onClick={() => navigate("/files")}>Go back</button>
+                <br />
+                <input
+                  type="file"
+                  onChange={handleFileChange}
+                  onClick={() => setMessage("waiting to upload a file...")}
+                />
+                <button onClick={() => updateFile(file.id)}>Update</button>
+                <p>{message}</p>
               </div>
             ) : (
               <p>File not found</p>
