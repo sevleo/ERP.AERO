@@ -49,6 +49,6 @@ app.use("/", mainRouter);
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log("app listening on port 3001!"));
 
-app.listen(PORT as any, "0.0.0.0", () => {
-  console.log(`Server is running on http://0.0.0.0:${PORT}`);
-});
+// app.listen(PORT as any, "0.0.0.0", () => {
+//   console.log(`Server is running on http://0.0.0.0:${PORT}`);
+// });
