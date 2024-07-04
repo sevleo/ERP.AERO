@@ -13,15 +13,13 @@ import cors from "cors";
 const app = express();
 
 const corsOptions = {
-  origin: "*", // Allow any origin
+  origin: ["https://erp-aero.netlify.app/", "https://erp-aero2.adaptable.app/"],
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"],
-  credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+  credentials: true,
 };
 
+app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
-app.use(cors(corsOptions));
-
-app.use(cors(corsOptions));
 
 app.use(passport.initialize());
 
@@ -34,8 +32,6 @@ app.use(express.urlencoded({ extended: false }));
 // Enable public folder
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use(cors());
-
 // View engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
@@ -45,9 +41,10 @@ app.set("view engine", "ejs");
 // Declare routes
 app.use("/", mainRouter);
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log("app listening on port 3001!"));
+app.use((err: any, req: any, res: any, next: any) => {
+  console.error(err.stack);
+  res.status(500).send("Internal Server Error");
+});
 
-// app.listen(PORT as any, "0.0.0.0", () => {
-//   console.log(`Server is running on http://0.0.0.0:${PORT}`);
-// });
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log("app listening on port 3000!"));
