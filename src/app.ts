@@ -18,9 +18,8 @@ const corsOptions = {
   credentials: true, // Allow credentials (cookies, authorization headers, etc.)
 };
 
-app.use(cors(corsOptions));
-
 app.options("*", cors(corsOptions));
+app.use(cors(corsOptions));
 
 app.use(cors(corsOptions));
 
