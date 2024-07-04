@@ -13,7 +13,11 @@ import cors from "cors";
 const app = express();
 
 const corsOptions = {
-  origin: ["https://erp-aero.netlify.app/", "https://erp-aero2.adaptable.app/"],
+  origin: [
+    "https://erp-aero.netlify.app/",
+    "https://erp-aero2.adaptable.app/",
+    "http://localhost:5173",
+  ],
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"],
   credentials: true,
 };
