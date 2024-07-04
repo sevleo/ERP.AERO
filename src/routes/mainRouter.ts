@@ -9,6 +9,7 @@ import {
   listFiles,
   deleteFile,
   getFile,
+  downloadFile,
 } from "../controllers/file";
 
 const router = express.Router();
@@ -84,7 +85,11 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   getFile
 );
-router.get("/file/download/:id");
+router.get(
+  "/file/download/:id",
+  passport.authenticate("jwt", { session: false }),
+  downloadFile
+);
 router.put("/file/update/:id");
 
 export default router;

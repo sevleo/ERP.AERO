@@ -106,6 +106,54 @@ export default function Files({ signedIn, setSignedIn, setUser }: any) {
       });
   };
 
+  const downloadFile = (fileId: string) => {
+    const accessToken = localStorage.getItem("accessToken");
+
+    axios
+      .get(`http://localhost:3000/file/${fileId}`, {
+        headers: {
+          authorization: accessToken,
+        },
+      })
+      .then((res) => {
+        console.log(res);
+        const fileName = res.data.file.file_name;
+        console.log(`${fileName}`);
+        axios
+          .get(`http://localhost:3000/file/download/${fileId}`, {
+            headers: {
+              authorization: accessToken,
+            },
+            responseType: "blob", // Specify the response type as blob
+          })
+          .then((res) => {
+            console.log(res);
+            // Create a blob object from the response data
+            const blob = new Blob([res.data], {
+              type: res.headers["content-type"],
+            });
+
+            // Create a temporary URL for the blob
+            const url = window.URL.createObjectURL(blob);
+
+            // Create a link element and simulate click to trigger download
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", `${fileName}`); // Set the file name for download
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // Clean up: Revoke the URL object
+            window.URL.revokeObjectURL(url);
+          });
+      })
+
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   return (
     <div>
       {loaded &&
@@ -131,6 +179,9 @@ export default function Files({ signedIn, setSignedIn, setUser }: any) {
                   <button onClick={() => deleteFile(file.id)}>Delete</button>
                   <button onClick={() => navigate(`/file/${file.id}`)}>
                     View Details
+                  </button>
+                  <button onClick={() => downloadFile(file.id)}>
+                    Download
                   </button>
                 </li>
               ))}

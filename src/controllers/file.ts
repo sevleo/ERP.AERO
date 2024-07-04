@@ -3,6 +3,7 @@ import path from "path";
 import connection from "../db";
 import { isTokenBlacklisted } from "../helpers/disableTokens";
 import multer from "multer";
+import contentDisposition from "content-disposition";
 
 // Function to upload file
 export const uploadFile = async (req: any, res: any) => {
@@ -162,27 +163,37 @@ export const getFile = async (req: any, res: any) => {
 
 // Function to download file
 export const downloadFile = async (req: any, res: any) => {
-  const { id } = req.params;
+  if (isTokenBlacklisted(req.headers.authorization)) {
+    res.status(401).send("token is blacklisted");
+  } else {
+    const { id } = req.params;
 
-  try {
-    const [file] = await connection
-      .promise()
-      .query("SELECT * FROM files WHERE id = ?", [id]);
-    if ((file as any).length === 0) {
-      return res
-        .status(404)
-        .send({ success: false, message: "File not found." });
+    try {
+      const [file] = await connection
+        .promise()
+        .query("SELECT * FROM files WHERE id = ?", [id]);
+
+      if ((file as any).length === 0) {
+        return res
+          .status(404)
+          .send({ success: false, message: "File not found." });
+      }
+
+      const fileName = (file as any)[0].filename;
+      const filePath = path.join(__dirname, "../../uploads/", fileName);
+      const file_name = (file as any)[0].file_name;
+
+      if (!fs.existsSync(filePath)) {
+        return res
+          .status(404)
+          .send({ success: false, message: "File not found on server." });
+      }
+      console.log(filePath);
+      res.download(filePath, file_name);
+    } catch (err) {
+      console.error("Error downloading file:", err);
+      res.status(500).send("Internal server error.");
     }
-
-    const filePath = path.join(
-      __dirname,
-      "../../uploads",
-      (file as any)[0].file_name
-    );
-    res.download(filePath);
-  } catch (err) {
-    console.error("Error downloading file:", err);
-    res.status(500).send("Internal server error.");
   }
 };
 
