@@ -4,7 +4,12 @@ import auth from "../controllers/auth";
 import passport from "passport";
 import displayData from "../controllers/displayData";
 import multer from "multer";
-import { uploadFile, listFiles, deleteFile } from "../controllers/file";
+import {
+  uploadFile,
+  listFiles,
+  deleteFile,
+  getFile,
+} from "../controllers/file";
 
 const router = express.Router();
 
@@ -74,7 +79,11 @@ router.delete(
   passport.authenticate("jwt", { session: false }),
   deleteFile
 );
-router.get("/file/:id");
+router.get(
+  "/file/:id",
+  passport.authenticate("jwt", { session: false }),
+  getFile
+);
 router.get("/file/download/:id");
 router.put("/file/update/:id");
 

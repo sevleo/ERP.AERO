@@ -137,22 +137,26 @@ export const deleteFile = async (req: any, res: any) => {
 
 // Function to get file details
 export const getFile = async (req: any, res: any) => {
-  const { id } = req.params;
+  if (isTokenBlacklisted(req.headers.authorization)) {
+    res.status(401).send("token is blacklisted");
+  } else {
+    const { id } = req.params;
 
-  try {
-    const [file] = await connection
-      .promise()
-      .query("SELECT * FROM files WHERE id = ?", [id]);
-    if ((file as any).length === 0) {
-      return res
-        .status(404)
-        .send({ success: false, message: "File not found." });
+    try {
+      const [file] = await connection
+        .promise()
+        .query("SELECT * FROM files WHERE id = ?", [id]);
+      if ((file as any).length === 0) {
+        return res
+          .status(404)
+          .send({ success: false, message: "File not found." });
+      }
+
+      res.status(200).send({ success: true, file: (file as any)[0] });
+    } catch (err) {
+      console.error("Error getting file details:", err);
+      res.status(500).send("Internal server error.");
     }
-
-    res.status(200).send((file as any)[0]);
-  } catch (err) {
-    console.error("Error getting file details:", err);
-    res.status(500).send("Internal server error.");
   }
 };
 

@@ -129,6 +129,9 @@ export default function Files({ signedIn, setSignedIn, setUser }: any) {
                 <li key={file.id}>
                   {file.id} | {file.file_name} - {file.file_size} bytes
                   <button onClick={() => deleteFile(file.id)}>Delete</button>
+                  <button onClick={() => navigate(`/file/${file.id}`)}>
+                    View Details
+                  </button>
                 </li>
               ))}
             </ul>

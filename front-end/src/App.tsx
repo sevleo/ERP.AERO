@@ -5,6 +5,7 @@ import Home from "./components/Home";
 import Latency from "./components/Latency";
 import Files from "./components/Files";
 import { useState } from "react";
+import FileDetails from "./components/FileDetails";
 
 function App() {
   const [signedIn, setSignedIn] = useState(false);
@@ -52,6 +53,16 @@ function App() {
               path="/files"
               element={
                 <Files
+                  signedIn={signedIn}
+                  setSignedIn={setSignedIn}
+                  setUser={setUser}
+                />
+              }
+            />
+            <Route
+              path="/file/:id"
+              element={
+                <FileDetails
                   signedIn={signedIn}
                   setSignedIn={setSignedIn}
                   setUser={setUser}
