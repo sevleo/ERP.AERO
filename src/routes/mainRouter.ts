@@ -4,7 +4,7 @@ import auth from "../controllers/auth";
 import passport from "passport";
 import displayData from "../controllers/displayData";
 import multer from "multer";
-import { uploadFile, listFiles } from "../controllers/file";
+import { uploadFile, listFiles, deleteFile } from "../controllers/file";
 
 const router = express.Router();
 
@@ -55,6 +55,8 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+// upload.single("file");
+
 // Files
 router.post(
   "/file/upload",
@@ -62,8 +64,16 @@ router.post(
   upload.single("file"),
   uploadFile
 );
-router.get("/file/list", listFiles);
-router.delete("/file/delete/:id");
+router.get(
+  "/file/list",
+  passport.authenticate("jwt", { session: false }),
+  listFiles
+);
+router.delete(
+  "/file/delete/:id",
+  passport.authenticate("jwt", { session: false }),
+  deleteFile
+);
 router.get("/file/:id");
 router.get("/file/download/:id");
 router.put("/file/update/:id");
