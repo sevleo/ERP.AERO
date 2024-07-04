@@ -15,54 +15,68 @@ export default function Files({ signedIn, setSignedIn, setUser }: any) {
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
     const refreshToken = localStorage.getItem("refreshToken");
+    console.log(accessToken);
+    console.log(refreshToken);
 
     axios
       .get("http://localhost:3000/verify-token", {
         headers: {
           authorization: accessToken,
-          // refreshToken: refreshToken,
+          refreshToken: refreshToken,
         },
       })
       .then((res) => {
         console.log(res);
-        setUser(res.data.userId);
+        if (res.data.newAccessToken) {
+          localStorage.setItem("accessToken", res.data.newAccessToken);
+        }
         setSignedIn(true);
-        fetchFiles(accessToken as any, page, listSize);
+        setUser(res.data.userId);
+        fetchFiles(accessToken as any, refreshToken as any, page, listSize);
+        // setLoaded(true);
       })
       .catch((err) => {
         console.log(err);
+        setLoaded(true);
+        setSignedIn(false);
 
-        if (
-          err.response.statusText === "Unauthorized" &&
-          err.response.status === 401
-        ) {
-          console.log(err.response.statusText);
-          axios
-            .get("http://localhost:3000/signin/new_token", {
-              headers: {
-                authorization: refreshToken,
-              },
-            })
-            .then((res) => {
-              localStorage.setItem("accessToken", res.data.accessToken);
-              console.log(res);
-              setUser(res.data.user.id);
-              setSignedIn(true);
-              fetchFiles(res.data.accessToken, page, listSize);
-            })
-            .catch((err) => {
-              console.log(err);
-              setLoaded(true);
-            });
-        }
+        // if (
+        //   err.response.statusText === "Unauthorized" &&
+        //   err.response.status === 401
+        // ) {
+        //   console.log(err.response.statusText);
+        //   axios
+        //     .get("http://localhost:3000/signin/new_token", {
+        //       headers: {
+        //         authorization: refreshToken,
+        //       },
+        //     })
+        //     .then((res) => {
+        //       localStorage.setItem("accessToken", res.data.accessToken);
+        //       console.log(res);
+        //       setUser(res.data.user.id);
+        //       setSignedIn(true);
+        //       fetchFiles(res.data.accessToken, page, listSize);
+        //     })
+        //     .catch((err) => {
+        //       console.log(err);
+        //       setLoaded(true);
+        //     });
+        // }
       });
   }, [setSignedIn, setUser, page, listSize]);
 
-  const fetchFiles = (accessToken: string, page: number, listSize: number) => {
+  const fetchFiles = (
+    accessToken: string,
+    refreshToken: string,
+    page: number,
+    listSize: number
+  ) => {
     axios
       .get("http://localhost:3000/file/list", {
         headers: {
           authorization: accessToken,
+          refreshToken: refreshToken,
         },
         params: {
           page,
@@ -70,6 +84,10 @@ export default function Files({ signedIn, setSignedIn, setUser }: any) {
         },
       })
       .then((res) => {
+        if (res.data.newAccessToken) {
+          localStorage.setItem("accessToken", res.data.newAccessToken);
+        }
+        console.log(res);
         setFiles(res.data.files);
         setTotalPages(res.data.totalPages);
         setLoaded(true);
@@ -91,15 +109,21 @@ export default function Files({ signedIn, setSignedIn, setUser }: any) {
 
   const deleteFile = (id: number) => {
     const accessToken = localStorage.getItem("accessToken");
+    const refreshToken = localStorage.getItem("refreshToken");
+
     axios
       .delete(`http://localhost:3000/file/delete/${id}`, {
         headers: {
           authorization: accessToken,
+          refreshToken: refreshToken,
         },
       })
       .then((res) => {
+        if (res.data.newAccessToken) {
+          localStorage.setItem("accessToken", res.data.newAccessToken);
+        }
         console.log(res.data.message);
-        fetchFiles(accessToken as any, page, listSize);
+        fetchFiles(accessToken as any, refreshToken as any, page, listSize);
       })
       .catch((err) => {
         console.log(err);
@@ -108,21 +132,28 @@ export default function Files({ signedIn, setSignedIn, setUser }: any) {
 
   const downloadFile = (fileId: string) => {
     const accessToken = localStorage.getItem("accessToken");
+    const refreshToken = localStorage.getItem("refreshToken");
 
     axios
       .get(`http://localhost:3000/file/${fileId}`, {
         headers: {
           authorization: accessToken,
+          refreshToken: refreshToken,
         },
       })
       .then((res) => {
         console.log(res);
+
+        if (res.data.newAccessToken) {
+          localStorage.setItem("accessToken", res.data.newAccessToken);
+        }
         const fileName = res.data.file.file_name;
         console.log(`${fileName}`);
         axios
           .get(`http://localhost:3000/file/download/${fileId}`, {
             headers: {
               authorization: accessToken,
+              refreshToken: refreshToken,
             },
             responseType: "blob", // Specify the response type as blob
           })

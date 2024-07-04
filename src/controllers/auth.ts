@@ -180,6 +180,7 @@ const verifyToken = asyncHandler(async (req: any, res: any, next: any) => {
       user: {
         id: req.user.id,
       },
+      newAccessToken: req.newAccessToken,
     });
   } else {
     console.log("token is expired");

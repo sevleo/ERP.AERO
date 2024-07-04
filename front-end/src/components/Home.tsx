@@ -22,38 +22,42 @@ function Home({ signedIn, setSignedIn, user, setUser }: any) {
         },
       })
       .then((res) => {
+        console.log(res);
+        if (res.data.newAccessToken) {
+          localStorage.setItem("accessToken", res.data.newAccessToken);
+        }
         setSignedIn(true);
         setUser(res.data.user.id);
         setLoaded(true);
-
-        console.log(accessToken);
-        console.log(refreshToken);
       })
       .catch((err) => {
         console.log(err);
-        if (
-          err.response.statusText === "Unauthorized" &&
-          err.response.status === 401
-        ) {
-          console.log(err.response.statusText);
-          axios
-            .get("http://localhost:3000/signin/new_token", {
-              headers: {
-                authorization: refreshToken,
-              },
-            })
-            .then((res) => {
-              localStorage.setItem("accessToken", res.data.accessToken);
-              console.log(res);
-              setUser(res.data.user.id);
-              setSignedIn(true);
-              setLoaded(true);
-            })
-            .catch((err) => {
-              console.log(err);
-              setLoaded(true);
-            });
-        }
+        setLoaded(true);
+        setSignedIn(false);
+
+        // if (
+        //   err.response.statusText === "Unauthorized" &&
+        //   err.response.status === 401
+        // ) {
+        //   console.log(err.response.statusText);
+        //   axios
+        //     .get("http://localhost:3000/signin/new_token", {
+        //       headers: {
+        //         authorization: refreshToken,
+        //       },
+        //     })
+        //     .then((res) => {
+        //       localStorage.setItem("accessToken", res.data.accessToken);
+        //       console.log(res);
+        //       setUser(res.data.user.id);
+        //       setSignedIn(true);
+        //       setLoaded(true);
+        //     })
+        //     .catch((err) => {
+        //       console.log(err);
+        //       setLoaded(true);
+        //     });
+        // }
       });
   }, [setSignedIn, setUser]);
 
@@ -97,9 +101,14 @@ function Home({ signedIn, setSignedIn, user, setUser }: any) {
         {
           headers: {
             authorization: localStorage.getItem("accessToken"),
+            refreshToken: localStorage.getItem("refreshToken"),
           },
         }
       );
+
+      if (response.data.newAccessToken) {
+        localStorage.setItem("accessToken", response.data.newAccessToken);
+      }
       setMessage(response.data.message);
       console.log(response);
       // fetchFiles();

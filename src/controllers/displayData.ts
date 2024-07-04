@@ -1,10 +1,11 @@
 import asyncHandler from "express-async-handler";
 import { calculateLatency } from "../helpers/calculateLatency";
 import { isTokenBlacklisted } from "../helpers/disableTokens";
+import { authorize } from "passport";
 
 const info = asyncHandler(async (req: any, res: any) => {
   console.log("display data info");
-  console.log(req.headers);
+  console.log(req);
 
   console.log(isTokenBlacklisted(req.headers.authorization));
   if (isTokenBlacklisted(req.headers.authorization)) {
@@ -17,6 +18,7 @@ const info = asyncHandler(async (req: any, res: any) => {
         success: true,
         message: "Loaded Info Page",
         userId: req.user.id,
+        newAccessToken: req.newAccessToken,
       });
     } catch (err) {
       console.log(err);
@@ -24,6 +26,7 @@ const info = asyncHandler(async (req: any, res: any) => {
     }
   } else {
     console.log("not logged in");
+    res.status(500).send("Internal server error");
   }
 });
 
@@ -45,6 +48,7 @@ const latency = asyncHandler(async (req: any, res: any) => {
         message: "Loaded Latency Page",
         userId: req.user.id,
         latency: latency,
+        newAccessToken: req.newAccessToken,
       });
     } catch (err) {
       console.log(err);

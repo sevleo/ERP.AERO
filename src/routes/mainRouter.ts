@@ -12,6 +12,7 @@ import {
   downloadFile,
   updateFile,
 } from "../controllers/file";
+import { authenticateWithRefresh } from "../helpers/authenticateWithRefreshToken";
 
 const router = express.Router();
 
@@ -34,20 +35,23 @@ router.get(
 // Verify token and get user if token is valid
 router.get(
   "/verify-token",
-  passport.authenticate("jwt", { session: false }),
+  authenticateWithRefresh,
+  // passport.authenticate("jwt", { session: false }),
   auth.verifyToken
 );
 
 // Services
 router.get(
   "/info",
-  passport.authenticate("jwt", { session: false }),
+  // passport.authenticate("jwt", { session: false }),
+  authenticateWithRefresh,
   displayData.info
 );
 
 router.get(
   "/latency",
-  passport.authenticate("jwt", { session: false }),
+  // passport.authenticate("jwt", { session: false }),
+  authenticateWithRefresh,
   displayData.latency
 );
 
@@ -65,33 +69,39 @@ const upload = multer({ storage });
 // Files
 router.post(
   "/file/upload",
-  passport.authenticate("jwt", { session: false }),
+  // passport.authenticate("jwt", { session: false }),
+  authenticateWithRefresh,
   upload.single("file"),
   uploadFile
 );
 router.get(
   "/file/list",
-  passport.authenticate("jwt", { session: false }),
+  // passport.authenticate("jwt", { session: false }),
+  authenticateWithRefresh,
   listFiles
 );
 router.delete(
   "/file/delete/:id",
-  passport.authenticate("jwt", { session: false }),
+  // passport.authenticate("jwt", { session: false }),
+  authenticateWithRefresh,
   deleteFile
 );
 router.get(
   "/file/:id",
-  passport.authenticate("jwt", { session: false }),
+  // passport.authenticate("jwt", { session: false }),
+  authenticateWithRefresh,
   getFile
 );
 router.get(
   "/file/download/:id",
-  passport.authenticate("jwt", { session: false }),
+  // passport.authenticate("jwt", { session: false }),
+  authenticateWithRefresh,
   downloadFile
 );
 router.put(
   "/file/update/:id",
-  passport.authenticate("jwt", { session: false }),
+  // passport.authenticate("jwt", { session: false }),
+  authenticateWithRefresh,
   upload.single("file"),
   updateFile
 );

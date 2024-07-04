@@ -32,9 +32,11 @@ export const uploadFile = async (req: any, res: any) => {
           filename,
         ]);
 
-      res
-        .status(200)
-        .send({ success: true, message: "File uploaded successfully." });
+      res.status(200).send({
+        success: true,
+        message: "File uploaded successfully.",
+        newAccessToken: req.newAccessToken,
+      });
     } catch (err) {
       console.error("Error uploading file:", err);
       res.status(500).send("Internal server error.");
@@ -44,6 +46,7 @@ export const uploadFile = async (req: any, res: any) => {
 
 // Function to list files
 export const listFiles = async (req: any, res: any) => {
+  console.log(req);
   if (isTokenBlacklisted(req.headers.authorization)) {
     res.status(401).send("token is blacklisted");
   } else {
@@ -71,6 +74,7 @@ export const listFiles = async (req: any, res: any) => {
         totalPages,
         currentPage: page,
         listSize: list_size,
+        newAccessToken: req.newAccessToken,
       });
     } catch (err) {
       console.error("Error listing files:", err);
@@ -112,9 +116,11 @@ export const deleteFile = async (req: any, res: any) => {
         await connection
           .promise()
           .query("DELETE FROM files WHERE id = ?", [id]);
-        res
-          .status(200)
-          .send({ success: true, message: "File deleted successfully." });
+        res.status(200).send({
+          success: true,
+          message: "File deleted successfully.",
+          newAccessToken: req.newAccessToken,
+        });
       });
     } catch (err) {
       console.error("Error deleting file:", err);
@@ -140,7 +146,13 @@ export const getFile = async (req: any, res: any) => {
           .send({ success: false, message: "File not found." });
       }
 
-      res.status(200).send({ success: true, file: (file as any)[0] });
+      console.log(req);
+
+      res.status(200).send({
+        success: true,
+        file: (file as any)[0],
+        newAccessToken: req.newAccessToken,
+      });
     } catch (err) {
       console.error("Error getting file details:", err);
       res.status(500).send("Internal server error.");
@@ -234,9 +246,11 @@ export const updateFile = async (req: any, res: any) => {
           id,
         ]);
 
-      res
-        .status(200)
-        .send({ success: true, message: "File updated successfully." });
+      res.status(200).send({
+        success: true,
+        message: "File updated successfully.",
+        newAccessToken: req.newAccessToken,
+      });
     } catch (err) {
       console.error("Error updating file:", err);
       res.status(500).send("Internal server error.");

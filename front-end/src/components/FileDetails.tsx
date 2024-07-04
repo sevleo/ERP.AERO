@@ -34,12 +34,17 @@ export default function FileDetails({ signedIn, setSignedIn, setUser }: any) {
         {
           headers: {
             authorization: localStorage.getItem("accessToken"),
+            refreshToken: localStorage.getItem("refreshToken"),
           },
         }
       );
       console.log(response);
       setMessage("File updated successfully.");
-      fetchFileDetails(localStorage.getItem("accessToken") as string, fileId);
+      fetchFileDetails(
+        localStorage.getItem("accessToken") as string,
+        localStorage.getItem("refreshToken") as string,
+        fileId
+      );
     } catch (err) {
       console.error("Error uploading file:", err);
       setMessage("Error updating file.");
@@ -54,47 +59,58 @@ export default function FileDetails({ signedIn, setSignedIn, setUser }: any) {
       .get(`http://localhost:3000/verify-token`, {
         headers: {
           authorization: accessToken,
+          refreshToken: refreshToken,
         },
       })
       .then((res) => {
+        console.log(res);
+        if (res.data.newAccessToken) {
+          localStorage.setItem("accessToken", res.data.newAccessToken);
+        }
         setUser(res.data.userId);
         setSignedIn(true);
-        fetchFileDetails(accessToken as any, id as any);
+        fetchFileDetails(accessToken as any, refreshToken as any, id as any);
       })
       .catch((err) => {
         console.log(err);
+        setLoaded(true);
 
-        if (
-          err.response.statusText === "Unauthorized" &&
-          err.response.status === 401
-        ) {
-          console.log(err.response.statusText);
-          axios
-            .get("http://localhost:3000/signin/new_token", {
-              headers: {
-                authorization: refreshToken,
-              },
-            })
-            .then((res) => {
-              localStorage.setItem("accessToken", res.data.accessToken);
-              console.log(res);
-              setUser(res.data.user.id);
-              setSignedIn(true);
-              fetchFileDetails(res.data.accessToken, id as any);
-            })
-            .catch((err) => {
-              console.log(err);
-              setLoaded(true);
-            });
-        }
+        // if (
+        //   err.response.statusText === "Unauthorized" &&
+        //   err.response.status === 401
+        // ) {
+        //   console.log(err.response.statusText);
+        //   axios
+        //     .get("http://localhost:3000/signin/new_token", {
+        //       headers: {
+        //         authorization: refreshToken,
+        //       },
+        //     })
+        //     .then((res) => {
+        //       localStorage.setItem("accessToken", res.data.accessToken);
+        //       console.log(res);
+        //       setUser(res.data.user.id);
+        //       setSignedIn(true);
+        //       fetchFileDetails(res.data.accessToken, id as any);
+        //     })
+        //     .catch((err) => {
+        //       console.log(err);
+        //       setLoaded(true);
+        //     });
+        // }
       });
   }, [setSignedIn, setUser, id]);
 
-  const fetchFileDetails = (accessToken: string, fileId: string) => {
+  const fetchFileDetails = (
+    accessToken: string,
+    refreshToken: string,
+    fileId: string
+  ) => {
     axios
       .get(`http://localhost:3000/file/${fileId}`, {
         headers: {
           authorization: accessToken,
+          refreshToken: refreshToken,
         },
       })
       .then((res) => {
