@@ -16,6 +16,8 @@ const corsOptions = {
     "https://erp-aero.netlify.app/",
     "https://erp-aero2.adaptable.app/",
     "http://localhost:5173",
+    "https://erp-aero.netlify.app",
+    "https://erp-aero2.adaptable.app",
   ],
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"],
   credentials: true,
