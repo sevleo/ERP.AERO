@@ -48,7 +48,16 @@ function App() {
                 />
               }
             />
-            <Route path="/files" element={<Files signedIn={signedIn} />} />
+            <Route
+              path="/files"
+              element={
+                <Files
+                  signedIn={signedIn}
+                  setSignedIn={setSignedIn}
+                  setUser={setUser}
+                />
+              }
+            />
           </Routes>
         </BrowserRouter>
       </div>
