@@ -12,13 +12,13 @@ import cors from "cors";
 
 const app = express();
 
-// Allow credentials (cookies, authorization headers, etc.)
-
 const corsOptions = {
-  origin: true, // This allows requests from any origin
-  methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
-  credentials: true,
+  origin: "*", // Allow any origin
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"],
+  credentials: true, // Allow credentials (cookies, authorization headers, etc.)
 };
+
+app.use(cors(corsOptions));
 
 app.options("*", cors(corsOptions));
 
