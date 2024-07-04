@@ -7,6 +7,7 @@ import {
   generateSigninToken,
 } from "../helpers/generateTokens";
 import { addToBlacklist, isTokenBlacklisted } from "../helpers/disableTokens";
+import validator from "validator";
 
 const signup = asyncHandler(async (req: Request, res: any) => {
   const { username, password } = req.body;
@@ -15,6 +16,15 @@ const signup = asyncHandler(async (req: Request, res: any) => {
     return res
       .status(400)
       .json({ message: "Username and password are required" });
+  }
+
+  if (
+    !validator.isEmail(username) &&
+    !validator.isMobilePhone(username, "any")
+  ) {
+    return res.status(400).json({
+      message: "Username must be either a valid email address or phone number.",
+    });
   }
 
   try {
